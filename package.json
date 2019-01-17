@@ -1,0 +1,25 @@
+{
+  "name": "api-from-scratch",
+  "version": "1.0.0",
+  "description": "Trying to make a simple api from scratch based off curriculum should be a REST API with endpoints that GET, POST, PUT, and DELETE. Should also implement mongoose to create the same endpoints to a database.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vlacross/scratch-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vlacross/scratch-api/issues"
+  },
+  "homepage": "https://github.com/vlacross/scratch-api#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "morgan": "^1.9.1"
+  }
+}
