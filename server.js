@@ -1,27 +1,56 @@
 const express = require('express');
 const app = express()
+const bodyParser = require('body-parser');
+const jsonParser = bodyParser.json();
 
 const mongoose = require('mongoose');
 const db = mongoose.connection;
 
-const morgan = require('morgan');
-
 const {PORT, DATABASE_URL} = require('./config');
-
 const {post} = require('./schema')
+
 app.use(express.json());
 app.use(express.static('view'));
 
+
+
 app.get('/posts', (req, res) => {
-    post.findOne({})
-    .then(post => res.send(post))
-    
-    console.log('getted')
+    post.find({})
+    .then(function(post) {
+        res.send(post)})
     res.status(200)
     /*code the get */
 });
 
-app.post('/posts', (req, res) => {
+app.get('/posts/:id', (req, res) => {
+    console.log(req.params.id)
+    post.findOne({_id: req.params.id})
+    .then(post => res.send(post));
+    res.status(200);
+})
+
+app.post('/posts', jsonParser, (req, res) => {
+    const requiredFields = ["author", "title", "content"];
+    requiredFields.forEach(field => {
+        console.log(field)
+        if(!(req.body[field]))
+        console.log('air ores');
+        return res.status(504)
+    })
+
+    post.create({
+                title: req.body.title,
+                 author: {
+                        firstName: req.body.author.firstName,
+                        lastName: req.body.author.lastName
+                        },
+                content: req.body.content,
+                created: new Date()
+                })
+    .then(post.find()
+        .then(post => res.send(post)))
+    res.status(202)
+    
     /*code the Post */
 });
 

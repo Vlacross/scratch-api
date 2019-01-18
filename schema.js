@@ -8,7 +8,7 @@ const blogPostSchema = new schema({
     lastName: String
   },
   content: String,
-  created: String
+  created: Date
 });
 
 
