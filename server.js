@@ -48,9 +48,13 @@ app.post('/posts', jsonParser, (req, res) => {
         content: req.body.content,
         created: new Date()
     })
-        .then(Post.find()
-            .then(post => res.send(post)))
-    res.status(202)
+    .then(function(newPost){
+        console.log(newPost)
+        res.json(newPost);
+    });
+    //     .then(Post.find()
+    //         .then(post => res.send(post)))
+    // res.status(202)
 
     /*code the Post */
 });
