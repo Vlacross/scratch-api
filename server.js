@@ -55,6 +55,20 @@ app.post('/posts', jsonParser, (req, res) => {
 });
 
 app.put('/posts/:id', (req,res) => {
+    if(!req.body._id || req.body._id !== req.params.id) { 
+        console.error('Missing or Incorrect \'id\'!!')
+        return res.status(500)
+    };
+    
+    const newData = Object.keys(req.body)
+    console.log(newData)
+    const possibleUpdates = ["title", "author", "content"]
+    newData.forEach(key => {
+        if(!possibleUpdates.includes(key)) {
+            console.error('db Schema doesn\'t support proposed data')
+        }
+    })
+    post.update({$set: newData})
     /*code some updater */
 });
 

@@ -30,7 +30,7 @@ module.exports = {post}
   {
       "title": "some title",
       "content": "a bunch of amazing words",
-      "author": "Sarah Clarke",
+      "author": "Sarah Clarke",1481322758429
       "created": "1481322758429"
   }
 
