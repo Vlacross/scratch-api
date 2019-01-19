@@ -17,13 +17,13 @@ blogPostSchema.virtual('fullname').get(function() {
   return this.author.firstName + ' ' + this.author.lastName
 });
 
-const post = mongoose.model('post', blogPostSchema);
+const Post = mongoose.model('post', blogPostSchema);
 
 
 
 
 
-module.exports = {post}
+module.exports = { Post }
 
 /*
 

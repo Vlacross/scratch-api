@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 const db = mongoose.connection;
 
 const { PORT, DATABASE_URL } = require('./config');
-const { post } = require('./schema')
+const { Post } = require('./schema')
 
 app.use(express.json());
 app.use(express.static('view'));
@@ -15,7 +15,7 @@ app.use(express.static('view'));
 
 
 app.get('/posts', (req, res) => {
-    post.find({})
+    Post.find({})
         .then(function (post) {
             res.send(post)
         })
@@ -25,7 +25,7 @@ app.get('/posts', (req, res) => {
 
 app.get('/posts/:id', (req, res) => {
     console.log(req.params.id)
-    post.findOne({ _id: req.params.id })
+    Post.findOne({ _id: req.params.id })
         .then(post => res.send(post));
     res.status(200);
 })
@@ -39,7 +39,7 @@ app.post('/posts', jsonParser, (req, res) => {
         return res.status(504)
     })
 
-    post.create({
+    Post.create({
         title: req.body.title,
         author: {
             firstName: req.body.author.firstName,
@@ -48,7 +48,7 @@ app.post('/posts', jsonParser, (req, res) => {
         content: req.body.content,
         created: new Date()
     })
-        .then(post.find()
+        .then(Post.find()
             .then(post => res.send(post)))
     res.status(202)
 
@@ -69,7 +69,7 @@ app.put('/posts/:id', (req, res) => {
             console.error('db Schema doesn\'t support proposed data')
         }
     })
-    post.update({ $set: newData })
+    Post.update({ $set: newData })
     /*code some updater */
 });
 
