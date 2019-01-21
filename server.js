@@ -17,7 +17,7 @@ app.use(express.static('view'));
 app.get('/posts', (req, res) => {
     Post.find({})
         .then(function (post) {
-            console.log(post)
+            
             res.send(post)
         })
     res.status(200)
