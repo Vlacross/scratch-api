@@ -9,6 +9,13 @@ body {
     align-items: center;
 }
 
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 .link {
     font-size: 16vh;
 }
@@ -17,8 +24,41 @@ body {
     font-size: 19vh;
 }
 
+.word {
+    display: none;
+}
+
+div {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.create-div:hover :last-child{
+    display:block;
+}
+
+.read-div:hover :last-child{
+    display:block;
+}
+
+.update-div:hover :last-child{
+    display:block;
+}
+
+.delete-div:hover :last-child{
+    display:block;
+}
+
 .box{
     display: flex;
     align-items: center;
     flex-direction: row;
+}
+
+li {
+    border: solid 1px black;
+    padding: 14px;
+    text-decoration: block;
 }
