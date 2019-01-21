@@ -16,3 +16,9 @@ body {
 .link:hover {
     font-size: 19vh;
 }
+
+.box{
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
