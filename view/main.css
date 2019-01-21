@@ -8,3 +8,11 @@ body {
     justify-content: center;
     align-items: center;
 }
+
+.link {
+    font-size: 16vh;
+}
+
+.link:hover {
+    font-size: 19vh;
+}
