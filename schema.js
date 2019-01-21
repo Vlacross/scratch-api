@@ -9,7 +9,13 @@ const blogPostSchema = new schema({
   },
   content: String,
   created: Date
-});
+}, {toObject: {
+  transform: function(doc, ret) {
+    ret.id = ret._id;
+    delete ret._id;
+    delete ret.__v
+  }
+}});
 
 
 
@@ -17,13 +23,13 @@ blogPostSchema.virtual('fullname').get(function() {
   return this.author.firstName + ' ' + this.author.lastName
 });
 
-blogPostSchema.set('toObject', {
-  transform: function (doc, ret) {
-    ret.id = ret._id;
-    delete ret._id;
-    delete ret.__v;
-  }
-});
+// blogPostSchema.set('toObject', {
+//   transform: function (doc, ret, options) {
+//     ret.id = ret._id;
+//     delete ret._id;
+//     delete ret.__v;
+//   }
+// });
 
 const Post = mongoose.model('post', blogPostSchema);
 
