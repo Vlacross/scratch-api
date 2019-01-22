@@ -64,6 +64,7 @@ app.post('/posts', jsonParser, (req, res) => {
 });
 
 app.put('/posts/:id', (req, res) => {
+    console.log('attempted update!')
     if (!req.params.id) {
         console.error('Missing \'id\'!!')
         return res.status(500)
