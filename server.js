@@ -65,6 +65,7 @@ app.post('/posts', jsonParser, (req, res) => {
 
 app.put('/posts/:id', (req, res) => {
     console.log('attempted update!')
+    console.log(req.body, '42')
     if (!req.params.id) {
         console.error('Missing \'id\'!!')
         return res.status(500)
@@ -83,7 +84,7 @@ app.put('/posts/:id', (req, res) => {
     // in options, we set new:true so that we get the newly updated data
     Post.findByIdAndUpdate(req.params.id, updatedData, {new: true})
     .then(post => {
-        console.log(post)
+        console.log(post.id)
         res.sendStatus(200)
     })
 
