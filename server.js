@@ -4,7 +4,6 @@ const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 
 const mongoose = require('mongoose');
-const db = mongoose.connection;
 
 const { PORT, DATABASE_URL } = require('./config');
 const { Post } = require('./schema')
@@ -25,10 +24,8 @@ app.get('/posts', (req, res) => {
 });
 
 app.get('/posts/:id', (req, res) => {
-    console.log(req.params.id)
     Post.findOne({ _id: req.params.id })
         .then(post => {
-            console.log(post)
             res.send(post)});
     res.status(200);
 })
@@ -36,9 +33,8 @@ app.get('/posts/:id', (req, res) => {
 app.post('/posts', jsonParser, (req, res) => {
     const requiredFields = ["author", "title", "content"];
     requiredFields.forEach(field => {
-        console.log(field)
         if (!(req.body[field])) {
-            console.log('air ores');
+            console.error('air ores');
         return res.status(504)
         };
     })
@@ -54,18 +50,15 @@ app.post('/posts', jsonParser, (req, res) => {
     })
     .then(function(newPost){
         console.log(newPost)
-        res.json(newPost);
+        res.json(newPost)
+        res.status(202)
     });
-    //     .then(Post.find()
-    //         .then(post => res.send(post)))
-    // res.status(202)
+    
 
     /*code the Post */
 });
 
 app.put('/posts/:id', (req, res) => {
-    console.log('attempted update!')
-    console.log(req.body, '42')
     if (!req.params.id) {
         console.error('Missing \'id\'!!')
         return res.status(500)
@@ -78,14 +71,13 @@ app.put('/posts/:id', (req, res) => {
         content,
         created
     }
-
     // Signature of .findByIdAndUpdate():
     // id to find, new data to update with, options
     // in options, we set new:true so that we get the newly updated data
     Post.findByIdAndUpdate(req.params.id, updatedData, {new: true})
     .then(post => {
         console.log(post.id)
-        res.sendStatus(200)
+        res.sendStatus(203)
     })
 
     // const newData = Object.keys(req.body)
@@ -114,7 +106,7 @@ let server;
 
 function runServer(PORT, DATABASE_URL) {
 
-/*recommended for performance outsid3e of dev env :  */
+/*recommended for performance outside of dev env :  */
     mongoose.connect(DATABASE_URL, { useNewUrlParser: true }, error => {
 
         if (error) {
