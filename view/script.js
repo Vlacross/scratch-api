@@ -19,8 +19,10 @@ function buildListing(post, num) {
 }
 
 function buildForm(post) {
-    let {firstName, lastName} = post.author;
-    let name = firstName + ' ' + lastName;
+    if(post){
+    let {firstName, lastName} = post.author
+    let name = firstName + ' ' + lastName 
+    }
 
     const updateForm = 
     `<form class="post-form">
@@ -28,7 +30,7 @@ function buildForm(post) {
       <h3>Make your adjustments for posting</h3>
       <div class="form-inputs">
         <label for="title-input">Title: 
-          <input id="title-input" class="form-data1" name="title" type="text" value=${post.title}>
+          <input id="title-input" class="form-data1" name="title" type="text" value=${post ? post.title : ''}>
         </label>
 
         <label for="author-input">Author: 
@@ -41,7 +43,7 @@ function buildForm(post) {
 
       <div class="content-input">
         <label for="content-input">Content: 
-          <textarea id="content-input" class="form-textbox" cols="40" rows="10" type="text" name="content">${post.content}</textarea>
+          <textarea id="content-input" class="form-textbox" cols="40" rows="10" type="text" name="content">${post ? post.content : ''}</textarea>
         </label>
       </div>
 
@@ -51,6 +53,34 @@ function buildForm(post) {
     return updateForm;
 }
 
+function buildPost() {
+    let formBody = buildForm();
+    $('.js-results').empty().append(formBody)
+    $('.js-results').submit('form', function(e) {
+        e.preventDefault();
+
+        let form = $('form').serializeArray()
+
+        function format(form) {
+        return form.reduce(function(acc, obj) {
+            acc[obj.name] = obj.value
+            return acc
+        }, {})
+        
+    }
+    const head = format(form)
+        console.log(JSON.stringify(head))
+        
+        fetch('../posts', 
+        {method: 'post',
+         body: JSON.stringify(head)})
+         .then(res => res.json())
+         .then(resj => console.log(resj))
+         .catch(err => console.log(err))
+
+        
+    });
+}
 
 function updatePost(postId) {
     console.log('updatePoster')
@@ -61,7 +91,7 @@ function updatePost(postId) {
 
     const updateForm = buildForm(resj)
 
-    $('.wrapper').addClass('row')
+    
     $('.js-results').empty().append(updateForm)})
 
     $('.js-results').submit('.post-form', function(e) {
@@ -75,21 +105,23 @@ function updatePost(postId) {
 
                 acc[obj.name] = obj.value
                 return acc
-            }, {})
+            }, {method: "PUT",})
         }
-
-        let head = buildHead(formData);
-        console.log(JSON.stringify(head))
-        // fetch(`../posts/${postId}`, {method: 'PUT'})
         
-        // .then(resj => console.log(resj.status))
+        let head = JSON.stringify(buildHead(formData));
+        console.log(head)
+      
+        fetch(`../posts/${postId}`, {method: 'post', body: head})
+        .then(res => console.log(res))
+        .then(resj => console.log(resj))
+        .catch(err => console.log(err))
         })
     
 }
 
 function deletePost(postId) {
     fetch(`../posts/${postId}`, {method: 'delete'})
-    .then(res => console.log(res.status))
+    .then(res => console.log(res))
 
 }
 
@@ -106,7 +138,7 @@ function showPosts() {
     blogPosts += listing
 
     })
-        
+    $('.wrapper').addClass('row')  
     $('.js-results').empty().append(`<div><ul>${blogPosts}</ul></div>`);
    })
 
@@ -127,6 +159,7 @@ function showPosts() {
 }
 
 function buildCreate() {
+buildPost()
 };
 
 function buildRead() {
