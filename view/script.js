@@ -1,10 +1,10 @@
 function buildListing(post, num) {
-    
+                        
     let listing = 
     `<li id="${post._id}">
     <h1>${post.title}</h1>
     <div>
-        <p>By: ${post.author}</p>
+        <p>By: ${post.author ? post.author : ''}</p>
         <p>Date Posted: ${post.created}</p>
         <p>${post.content}</p>
       </div>`
@@ -14,28 +14,40 @@ function buildListing(post, num) {
     <input class="update" type="submit" value="update">
     <input class="delete" type="submit" value ="delete">
     </div>
-    </li>`}
+    </li>`
+    
     return listing;
+    
+    }
 }
 
-function buildForm(post) {
+function buildForm(num, post) {
     if(post){
     let {firstName, lastName} = post.author
     let name = firstName + ' ' + lastName 
+    }
+    if(num === 2){
+        var banner = `<h3>Enter all fields for new posting</h3>`
+    } else if (num === 3) {
+        var banner = `<h3>Make your adjustments for this posting</h3>`
     }
 
     const updateForm = 
     `<form class="post-form">
       <fieldset>
-      <h3>Make your adjustments for posting</h3>
+      ${banner}
       <div class="form-inputs">
         <label for="title-input">Title: 
-          <input id="title-input" class="form-data1" name="title" type="text" value=${post ? post.title : ''}>
+          <input id="title-input" class="form-data1" name="title" type="text" value=${post ? post.title : ''} required>
         </label>
 
-        <label for="author-input">Author: 
-          <input id="author-input" class="form-data1" name="author" type="text" value="${name}">
+        <label for="author-first-input">Author First: 
+          <input id="author-input" class="form-data1" name="author" type="text" value="${post ? name : ''}" required>
         </label>
+
+        <label for="post-id-input">Post ID: 
+        <input id="post-id-input" class="form-data1" name="id" type="text" value="${post ? post._id : ''}" required>
+      </label>
 
         <input class="put" type ="submit">
 
@@ -54,31 +66,37 @@ function buildForm(post) {
 }
 
 function buildPost() {
-    let formBody = buildForm();
+    let formBody = buildForm(2);
+    $('.wrapper').addClass('row') 
     $('.js-results').empty().append(formBody)
     $('.js-results').submit('form', function(e) {
         e.preventDefault();
 
         let form = $('form').serializeArray()
-
         function format(form) {
+        
         return form.reduce(function(acc, obj) {
+            if(obj.name === 'author') { 
+                let {value} = obj
+                let name = value.split(' ')
+                obj.value = {firstName: name[0],
+                             lastName: name[1]}
+            }
             acc[obj.name] = obj.value
             return acc
-        }, {})
-        
+        }, {}) 
     }
+
     const head = format(form)
-        console.log(JSON.stringify(head))
-        
+    
         fetch('../posts', 
         {method: 'post',
-         body: JSON.stringify(head)})
-         .then(res => res.json())
+         headers: {accept: 'application/json',
+                  'content-type': 'application/json'},
+        body: JSON.stringify(head)
+        })
          .then(resj => console.log(resj))
          .catch(err => console.log(err))
-
-        
     });
 }
 
@@ -89,7 +107,7 @@ function updatePost(postId) {
     .then(res => res.json())
     .then(function(resj) {
 
-    const updateForm = buildForm(resj)
+    const updateForm = buildForm(3, resj)
 
     
     $('.js-results').empty().append(updateForm)})
@@ -122,6 +140,42 @@ function updatePost(postId) {
 function deletePost(postId) {
     fetch(`../posts/${postId}`, {method: 'delete'})
     .then(res => console.log(res))
+    
+    showPosts()
+}
+
+function deleteOne() {
+
+    const postRemove = 
+    `<div>
+      <h3>Delete a posting by it's ID</h3>
+      <label for="post-id-input">Post ID: 
+         <input id="post-id-input" class="delete-one" name="id" type="text" required>
+      </label>
+        <input class="remove" type ="submit">
+    </div>`
+
+    $('.wrapper').addClass('row')  
+    $('.js-results').empty().append(`${postRemove}`)
+    $('.js-results').on('click', '.remove', function(e) {
+        let postId = $('.delete-one').val()
+        console.log(postId)
+        fetch(`../posts/${postId}`)
+        .then(res => res.json())
+        .then(function(resj) {
+            console.log(resj)
+            let deleteOne = buildListing(resj)
+            $('.js-results').empty().append(`${deleteOne}`)
+            
+            $('.js-results').on('click', '.delete', function(e) {
+                e.preventDefault();
+                 currentPost = $(this).closest('li').attr('id')
+                 console.log(currentPost)
+                 deletePost(currentPost)
+            })
+        })
+
+    })
 
 }
 
@@ -134,7 +188,7 @@ function showPosts() {
     let blogPosts = ``;
     resj.forEach(post =>{
     let listing = buildListing(post)
-
+       
     blogPosts += listing
 
     })
@@ -170,6 +224,7 @@ function buildUpdate() {
 };
 
 function buildDelete() {
+deleteOne();
 };
 
 function handleSelection() {
