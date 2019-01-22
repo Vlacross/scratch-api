@@ -35,6 +35,15 @@ div {
     align-items: center;
 }
 
+.row {
+    flex-direction: row;
+}
+
+.wrapper {
+    display: flex;
+    
+}
+
 .create-div:hover :last-child{
     display:block;
 }
@@ -61,4 +70,14 @@ li {
     border: solid 1px black;
     padding: 14px;
     text-decoration: block;
+}
+
+.post-form {
+   display: flex;
+  
+}
+
+.content-input {
+    height: 75%;
+    width: 80%;
 }
