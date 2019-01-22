@@ -38,7 +38,7 @@ function buildForm(num, post) {
       ${banner}
       <div class="form-inputs">
         <label for="title-input">Title: 
-          <input id="title-input" class="form-data1" name="title" type="text" value=${post ? post.title : ''} required>
+          <input id="title-input" class="form-data1" name="title" type="text" value="${post ? post.title : ''}" required>
         </label>
 
         <label for="author-first-input">Author First: 
@@ -46,7 +46,7 @@ function buildForm(num, post) {
         </label>
 
         <label for="post-id-input">Post ID: 
-        <input id="post-id-input" class="form-data1" name="id" type="text" value="${post ? post._id : ''}" required>
+        <input id="post-id-input" class="form-data1" name="id" type="text" value="${post ? post._id : ''}">
       </label>
 
         <input class="put" type ="submit">
@@ -131,10 +131,40 @@ function updatePost(postId) {
       
         fetch(`../posts/${postId}`, {method: 'post', body: head})
         .then(res => console.log(res))
-        .then(resj => console.log(resj))
         .catch(err => console.log(err))
         })
     
+}
+
+function updateById() {
+    const findForm = 
+    `<div>
+    <h3Enter the ID of post you'd like to update</h3>
+    <label for="post-id-input">Post ID: 
+       <input id="post-id-input" class="update-one" name="id" type="text" required>
+    </label>
+      <input class="findUpdate" type ="submit">
+    </div>`
+
+    $('.wrapper').addClass('row')  
+    $('.js-results').empty().append(`${findForm}`)
+    $('.js-results').one('click', '.findUpdate', function(e) {
+        let postId = $('.update-one').val();
+        fetch(`../posts/${postId}`)
+        .then(res => res.json())
+        .then(function(resj) {
+            console.log(resj)
+            let updateOne = buildForm(resj)
+            $('.js-results').empty().append(`${updateOne}`)
+
+            $('.js-results').one('click', '.update', function(e) {
+                e.preventDefault();
+                 currentPost = $(this).closest('li').attr('id')
+                 console.log(currentPost)
+                 updatePost(currentPost)
+            })
+        })
+    })
 }
 
 function deletePost(postId) {
@@ -144,38 +174,46 @@ function deletePost(postId) {
     showPosts()
 }
 
-function deleteOne() {
+function deleteById() {
 
-    const postRemove = 
-    `<div>
-      <h3>Delete a posting by it's ID</h3>
-      <label for="post-id-input">Post ID: 
-         <input id="post-id-input" class="delete-one" name="id" type="text" required>
-      </label>
-        <input class="remove" type ="submit">
-    </div>`
+    
+        const removalListing = 
+        `<div>
+        <h3>Delete a posting by it's ID</h3>
+        <label for="post-id-input">Post ID: 
+            <input id="post-id-input" class="delete-one" name="id" type="text" required>
+        </label>
+            <input class="remove" type ="submit">
+        </div>`
 
-    $('.wrapper').addClass('row')  
-    $('.js-results').empty().append(`${postRemove}`)
-    $('.js-results').on('click', '.remove', function(e) {
-        let postId = $('.delete-one').val()
+        $('.wrapper').addClass('row')  
+        $('.js-results').empty().append(`${removalListing}`)
+        $('.js-results').one('click', '.remove', function(e) {
+          let postId = $('.delete-one').val()
+          $('.js-results').off('click', '.remove')
+            
+        
+     
+    
         console.log(postId)
         fetch(`../posts/${postId}`)
         .then(res => res.json())
         .then(function(resj) {
             console.log(resj)
             let deleteOne = buildListing(resj)
-            $('.js-results').empty().append(`${deleteOne}`)
-            
-            $('.js-results').on('click', '.delete', function(e) {
+            $('.js-results').empty().append(`${deleteOne}`)           
+
+
+            $('.js-results').one('click', '.delete', function(e) {
                 e.preventDefault();
+                $('.js-results').off('click', '.delete');
                  currentPost = $(this).closest('li').attr('id')
-                 console.log(currentPost)
+                 console.log(currentPost, 'lastStep')
                  deletePost(currentPost)
             })
         })
-
     })
+    
 
 }
 
@@ -196,14 +234,14 @@ function showPosts() {
     $('.js-results').empty().append(`<div><ul>${blogPosts}</ul></div>`);
    })
 
-   $('.js-results').on('click', '.update', function(e) {
+   $('.js-results').one('click', '.update', function(e) {
        e.preventDefault();
         currentPost = $(this).closest('li').attr('id')
         console.log(currentPost)
         updatePost(currentPost)
    })
 
-   $('.js-results').on('click', '.delete', function(e) {
+   $('.js-results').one('click', '.delete', function(e) {
     e.preventDefault();
      currentPost = $(this).closest('li').attr('id')
      console.log(currentPost)
@@ -221,32 +259,33 @@ showPosts();
 };
 
 function buildUpdate() {
+updateById()
 };
 
 function buildDelete() {
-deleteOne();
+deleteById();
 };
 
 function handleSelection() {
-    $('.c').on('click', function(e) {
+    $('.c').one('click', function(e) {
         console.log('create!')
         $('.intro').remove();
         buildCreate();
     });
 
-    $('.r').on('click', function(e) {
+    $('.r').one('click', function(e) {
         console.log('reader!')
         $('.intro').remove();
         buildRead();
     });
 
-    $('.u').on('click', function(e) {
+    $('.u').one('click', function(e) {
         console.log('update!')
         $('.intro').remove();
         buildUpdate();
     })
 
-    $('.d').on('click', function(e) {
+    $('.d').one('click', function(e) {
         console.log('delete!')
         $('.intro').remove();
         buildDelete();
