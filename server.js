@@ -6,45 +6,87 @@ const jsonParser = bodyParser.json();
 const mongoose = require('mongoose');
 
 const { PORT, DATABASE_URL } = require('./config');
-const { Post } = require('./schema')
+const { Post, Author } = require('./schema')
 
 app.use(express.json());
 app.use(express.static('view'));
 
 
+app.get('/authors', (req, res) => {
+    Author.find()
+    .then(function(authors) {
+        console.log(authors._id)
+        res.send(authors)
+        
+    })           
+})
+
+app.get('/authors/:id', (req, res) => {
+    Author.findOne({_id: req.params.id})
+    .then(author => {
+        console.log('Just passing through thanks...')
+        res.json(author)
+    })           
+})
 
 app.get('/posts', (req, res) => {
-    Post.find({})
-        .then(function (post) {
+    Post.find()
+    .populate('author')
+    .select('-comments')
+    .then(function(posts) {
+        let newPosts =[];
+        posts.forEach(post => {
             
-            res.send(post)
+            newPosts.push(post.serialize())
         })
+        res.json(newPosts)  
+    })
+    
     res.status(200)
+    
     /*code the get */
 });
 
 app.get('/posts/:id', (req, res) => {
     Post.findOne({ _id: req.params.id })
+        .populate('author')
         .then(post => {
-            res.send(post)});
+           
+          
+            res.json(post.serialize())
+        });
     res.status(200);
 })
 
+app.post('/postser', (req, res) => {
+    const {title, author_id} = req.body
+    console.log(title)
+    Author.count({"_id": "5af50c84c082f1e92f83420b"}, function(err, count) {
+        if(count>0) {console.log('Yes!', count)}
+        else if(err) {console.log(err)}
+    })
+})
+
+
 app.post('/posts', jsonParser, (req, res) => {
-    const requiredFields = ["author", "title", "content"];
+    const requiredFields = ["author_id", "title", "content"];
     requiredFields.forEach(field => {
         if (!(req.body[field])) {
             console.error('air ores');
-        return res.status(504)
+        return res.send(`Missing ${field} in data`).status(400)
         };
+       
     })
 
+    Author.aggregate({$count: {"_id": "ObjectId(5af50c84c082f1e92f83420b)"}}, function(err, count) {
+        if(count>0) {console.log('ID EXISTS!', count)}
+        else if(count=0) {console.log('Couldn\'t find Author ID')}
+        else if(err) {console.log(err)}
+    })
+    
     Post.create({
         title: req.body.title,
-        author: {
-            firstName: req.body.author.firstName,
-            lastName: req.body.author.lastName
-        },
+        author: {type: mongoose.Types.ObjectId, ref: 'Author'},
         content: req.body.content,
         created: new Date()
     })
@@ -52,7 +94,8 @@ app.post('/posts', jsonParser, (req, res) => {
         console.log(newPost)
         res.json(newPost)
         res.status(202)
-    });
+    })
+    .catch(err => console.log(err))
     
 
     /*code the Post */
@@ -61,7 +104,7 @@ app.post('/posts', jsonParser, (req, res) => {
 app.put('/posts/:id', (req, res) => {
     if (!req.params.id) {
         console.error('Missing \'id\'!!')
-        return res.status(500)
+        return res.status(400)
     };
 
     const { title, author, content, created } = req.body;
@@ -77,7 +120,7 @@ app.put('/posts/:id', (req, res) => {
     Post.findByIdAndUpdate(req.params.id, updatedData, {new: true})
     .then(post => {
         console.log(post.id)
-        res.sendStatus(203)
+        res.sendStatus(200)
     })
 
     // const newData = Object.keys(req.body)
@@ -95,7 +138,7 @@ app.put('/posts/:id', (req, res) => {
 app.delete('/posts/:id', (req, res) => {
     if(!req.params.id) {
         console.error('missing \'id\'!!')
-        return res.status(500)
+        return res.status(400)
     };
     Post.findByIdAndDelete({_id: req.params.id})
     .then( res.end().status(204))
