@@ -4,7 +4,7 @@ function buildListing(post, num) {
     `<li id="${post._id}">
     <h1>${post.title}</h1>
     <div>
-        <p>By: ${post.author ? post.author : ''}</p>
+        <p>By: ${post ? post.fullname : ''}</p>
         <p>Date Posted: ${post.created}</p>
         <p>${post.content}</p>
       </div>`
@@ -267,7 +267,8 @@ deleteById();
 };
 
 function handleSelection() {
-    $('.c').one('click', function(e) {
+    $('.c').on('click', function(e) {
+        
         console.log('create!')
         $('.intro').remove();
         buildCreate();
