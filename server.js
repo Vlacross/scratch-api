@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 
 const { PORT, DATABASE_URL } = require('./config');
 const { Post, Author } = require('./schema')
+const { extract } = require('./toolCode')
 
 app.use(express.json());
 app.use(express.static('view'));
@@ -58,18 +59,12 @@ app.get('/posts/:id', (req, res) => {
     res.status(200);
 })
 
-// app.post('/postser', (req, res) => {
-//     const {title, author_id} = req.body
-//     let oid = author_id
-//     let noid = /\(([^)]+)\)/.exec(oid)
-//     let newId = noid[1]
-//     console.log(newId)
-//     Author.count({_id:  newId}, function(err, count) {
-//         if(count>0) {console.log('ID EXISTS!', count)}
-//         else if(count=0) {console.log('Couldn\'t find Author ID')}
-//         else if(err) {console.log(err)}
-//     })
-// })
+app.post('/postser', (req, res) => {
+    const {title, author_id} = req.body
+    let newId = extract(author_id)
+    const valid = Author.checkExist(newId)
+    console.log(valid === newId)
+})
 
 
 app.post('/posts', jsonParser, (req, res) => {
@@ -79,32 +74,32 @@ app.post('/posts', jsonParser, (req, res) => {
             console.error('air ores');
         return res.send(`Missing ${field} in data`).status(400)
         };
-       
     })
+    /*Validate author exists */
+    const {author_id} = req.body
+    let newId = extract(author_id)
+    const valid = Author.checkExist(newId)
 
-    const {title, author_id} = req.body
-    console.log(author_id)
-    let oid = author_id
-    let noid = /\(([^)]+)\)/.exec(oid)
-    let newId = noid[1]
-   
-    console.log(newId)
-    Author.count({_id:  newId}, function(err, count) {
-        if(count>0) {console.log('Author Exists!', count)}
-        else if(count=0) {console.log('Couldn\'t find Author ID')}
-        else if(err) {console.log(err)}
-    })
+
+ 
+    console.log(!valid === newId)
+  
     
     Post.create({
         title: req.body.title,
         author: newId,
         content: req.body.content,
         created: new Date
-    })
+    }, {toObject: {
+        populate: true
+    }})
+    
     
     .then(function(newPost){
+        
+        
         console.log(newPost)
-        res.json(newPost)
+        // res.json(newPost.serialize())
         res.status(202)
     })
     .catch(err => console.log(err))
