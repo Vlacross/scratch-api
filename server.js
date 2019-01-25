@@ -58,18 +58,18 @@ app.get('/posts/:id', (req, res) => {
     res.status(200);
 })
 
-app.post('/postser', (req, res) => {
-    // const {title, author_id} = req.body
-    // let oid = author_id
-    // let noid = /\(([^)]+)\)/.exec(oid)
-    // let newId = noid
-    
-    Author.count({_id:  "5af50c84c082f1e92f83420b"}, function(err, count) {
-        if(count>0) {console.log('ID EXISTS!', count)}
-        else if(count=0) {console.log('Couldn\'t find Author ID')}
-        else if(err) {console.log(err)}
-    })
-})
+// app.post('/postser', (req, res) => {
+//     const {title, author_id} = req.body
+//     let oid = author_id
+//     let noid = /\(([^)]+)\)/.exec(oid)
+//     let newId = noid[1]
+//     console.log(newId)
+//     Author.count({_id:  newId}, function(err, count) {
+//         if(count>0) {console.log('ID EXISTS!', count)}
+//         else if(count=0) {console.log('Couldn\'t find Author ID')}
+//         else if(err) {console.log(err)}
+//     })
+// })
 
 
 app.post('/posts', jsonParser, (req, res) => {
@@ -82,18 +82,26 @@ app.post('/posts', jsonParser, (req, res) => {
        
     })
 
-    Author.aggregate([{$count: {"_id": "ObjectId(5af50c84c082f1e92f83420b)"}}], function(err, count) {
-        if(count>0) {console.log('ID EXISTS!', count)}
+    const {title, author_id} = req.body
+    console.log(author_id)
+    let oid = author_id
+    let noid = /\(([^)]+)\)/.exec(oid)
+    let newId = noid[1]
+   
+    console.log(newId)
+    Author.count({_id:  newId}, function(err, count) {
+        if(count>0) {console.log('Author Exists!', count)}
         else if(count=0) {console.log('Couldn\'t find Author ID')}
         else if(err) {console.log(err)}
     })
     
     Post.create({
         title: req.body.title,
-        author: {type: mongoose.Types.ObjectId, ref: 'Author'},
+        author: newId,
         content: req.body.content,
-        created: new Date()
+        created: new Date
     })
+    
     .then(function(newPost){
         console.log(newPost)
         res.json(newPost)
