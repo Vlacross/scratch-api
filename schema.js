@@ -58,13 +58,25 @@ const authorSchema = new schema({
              unique: true}
 }, SCHEMA_OPTS);
 
-// authorSchema.set('toObject', {
-//   transform: function(doc, ret){
-//     delete ret._id;
-    
-
-//   }
-// })
+authorSchema.statics.checkExist = function(newId) {
+  /*use count() to verify author_id existance within db  */
+ this.count({_id:  newId}, function(err, count) {
+    if(count > 0) {
+      let msg = `Author exists in db. Found ${count} match`;
+      console.log(msg)
+      throw (true)
+    } else if (count = 0) {
+      let msg = `Couldn't find Author_id ${newId}`
+      console.log(msg)
+      throw (false)
+    } else if (err) {
+      console.log(err.name)
+      throw (err.name)
+    }
+  })
+  return newId
+  
+};
 
 authorSchema.virtual('fullName').get(function() {
   return this.firstName + ' ' + this.lastName
