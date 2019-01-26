@@ -26,11 +26,11 @@ blogPostSchema.methods.serialize = function() {
 }
 
 function populateAuthor() {
-    console.log('this');
+    console.log(target);
     console.log('twiggered')
 }
 
-blogPostSchema.pre('find', populateAuthor)
+// blogPostSchema.pre('find', populateAuthor)
 // blogPostSchema.pre('findOne', populateAuthor)
 
 blogPostSchema.pre('validate', function() {
@@ -39,6 +39,10 @@ blogPostSchema.pre('validate', function() {
 
 blogPostSchema.virtual('authrah').get(function() {
     
+if(this === undefined)  {
+    console.log('names are undeffed')
+    
+} else console.log('not undeffed');    
   return this.author.firstName + ' ' + this.author.lastName
 });
 
