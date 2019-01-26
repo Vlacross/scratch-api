@@ -1,8 +1,11 @@
 const mongoose = require('mongoose');
 const schema = mongoose.Schema;
-const ObjectId = schema.Types.ObjectId
+const ObjectId = schema.Types.ObjectId;
 
 const { SCHEMA_OPTS } = require('./common')
+const {Author} = require('./author')
+
+
 
 const blogPostSchema = new schema({
   title: String,
@@ -22,7 +25,20 @@ blogPostSchema.methods.serialize = function() {
   }
 }
 
+function populateAuthor() {
+    console.log('this');
+    console.log('twiggered')
+}
+
+blogPostSchema.pre('find', populateAuthor)
+// blogPostSchema.pre('findOne', populateAuthor)
+
+blogPostSchema.pre('validate', function() {
+    console.log(this, 33)
+})
+
 blogPostSchema.virtual('authrah').get(function() {
+    
   return this.author.firstName + ' ' + this.author.lastName
 });
 

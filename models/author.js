@@ -18,14 +18,14 @@ const authorSchema = new schema({
         if(count > 0) {
           let msg = `Author exists in db. Found ${count} match`;
           console.log(msg)
-          throw (true)
+          return true
         } else if (count = 0) {
           let msg = `Couldn't find Author_id ${newId}`
           console.log(msg)
-          throw (false)
+          return false
         } else if (err) {
           console.log(err.name)
-          throw (err.name)
+          return err.name
         }
       })
       
@@ -41,4 +41,4 @@ const authorSchema = new schema({
   const Author = mongoose.model('Author', authorSchema);
 
 
-  module.exports = Author;
+  module.exports = Author; 

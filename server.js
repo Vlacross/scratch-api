@@ -6,7 +6,7 @@ const jsonParser = bodyParser.json();
 const mongoose = require('mongoose');
 
 const { PORT, DATABASE_URL } = require('./config');
-const { Post, Author } = require('./schema')
+const { Author, Post } = require('./models')
 const { extract } = require('./toolCode')
 
 app.use(express.json());
@@ -16,7 +16,9 @@ app.use(express.static('view'));
 app.get('/authors', (req, res) => {
     Author.find()
     .then(function(authors) {
-        console.log(authors._id)
+        authors.forEach(author => {
+            console.log(author.fullName)
+        })
         res.send(authors)
         
     })           
@@ -37,7 +39,7 @@ app.get('/posts', (req, res) => {
     .then(function(posts) {
         let newPosts =[];
         posts.forEach(post => {
-            
+            console.log(post.serialize)
             newPosts.push(post.serialize())
         })
         res.json(newPosts)  
@@ -52,18 +54,16 @@ app.get('/posts/:id', (req, res) => {
     Post.findOne({ _id: req.params.id })
         .populate('author')
         .then(post => {
-           
-          
+           console.log(post)
             res.json(post.serialize())
         });
     res.status(200);
 })
 
 app.post('/postser', (req, res) => {
-    const {title, author_id} = req.body
+    const {author_id} = req.body
     let newId = extract(author_id)
-    const valid = Author.checkExist(newId)
-    console.log(valid === newId)
+    Post.find({_id: newId})
 })
 
 
@@ -82,7 +82,7 @@ app.post('/posts', jsonParser, (req, res) => {
 
 
  
-    console.log(!valid === newId)
+    // console.log(!valid === newId)
   
     
     Post.create({
