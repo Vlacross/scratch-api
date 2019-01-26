@@ -34,12 +34,15 @@ app.get('/authors/:id', (req, res) => {
 
 app.get('/posts', (req, res) => {
     Post.find()
+    // .cursor()
+    // .on('data', function(doc) {console.log(doc)})
+    // .on('end', function() {console.log('done!')})
     .populate('author')
     .select('-comments')
     .then(function(posts) {
         let newPosts =[];
         posts.forEach(post => {
-            console.log(post.serialize)
+            console.log(post.serialize())
             newPosts.push(post.serialize())
         })
         res.json(newPosts)  
