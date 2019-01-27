@@ -25,16 +25,25 @@ blogPostSchema.methods.serialize = function() {
   }
 }
 
-function populateAuthor() {
-    console.log(target);
-    console.log('twiggered')
-}
+// function populateAuthor() {
+//   console.log('twiggeredOne')
+//   console.log()
+//     console.log('twiggeredTwo')
+// }
 
 // blogPostSchema.pre('find', populateAuthor)
-// blogPostSchema.pre('findOne', populateAuthor)
+// blogPostSchema.pre('findOne', populateAuthor(err, doc))
 
 blogPostSchema.pre('validate', function() {
-    console.log(this, 33)
+    console.log(this.author, 'valley')
+})
+
+blogPostSchema.pre('save', function() {
+  console.log('pre-save')
+});
+
+blogPostSchema.post('save', function() {
+  console.log('post-save')
 })
 
 blogPostSchema.virtual('authrah').get(function() {
