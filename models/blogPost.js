@@ -36,6 +36,11 @@ blogPostSchema.methods.serialize = function() {
 
 blogPostSchema.pre('validate', function() {
     console.log(this.author, 'valley')
+    Author.checkExist(this.author)
+});
+
+blogPostSchema.post('validate', function() {
+  console.log('post-Val')
 })
 
 blogPostSchema.pre('save', function() {
@@ -43,7 +48,7 @@ blogPostSchema.pre('save', function() {
 });
 
 blogPostSchema.post('save', function() {
-  console.log('post-save')
+  console.log(this, 'post-save')
 })
 
 blogPostSchema.virtual('authrah').get(function() {
