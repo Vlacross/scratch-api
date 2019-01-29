@@ -12,26 +12,24 @@ const authorSchema = new schema({
   
   authorSchema.statics.checkExist = function(newId) {
     /*use count() to verify author_id existance within db  */
-    
-    
-    this.count({_id:  newId}, function(err, count) {
-        if(count > 0) {
-          let msg = `Author exists in db. Found ${count} match`;
-          console.log(msg)
-          return true
-        } else if (count = 0) {
-          let msg = `Couldn't find Author_id ${newId}`
-          console.log(msg)
-          return false
-        } else if (err) {
-          console.log(err.name)
-          return err.name
-        }
-      })
       
+      this.count({_id:  newId}, function(err, count) {
+      
+          if(count > 0) {
+            let msg = `Author exists in db. Found ${count} match`;
+            console.log(msg)
+            return newId;
+          } else if (count = 0) {
+            let msg = `Couldn't find Author_id ${newId}`
+            console.log(msg)
+            return new Error(msg);
+          } else if (err) {
+            console.log(err.name)
+            return new Error(err.name)
+          }
+        })
    
-    return newId
-    
+ 
   };
   
   authorSchema.virtual('fullName').get(function() {
