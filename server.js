@@ -15,41 +15,41 @@ app.use(express.static('view'));
 
 app.get('/authors', (req, res) => {
     Author.find()
-    .then(function(authors) {
-        authors.forEach(author => {
-            console.log(author.fullName)
+        .then(function (authors) {
+            authors.forEach(author => {
+                console.log(author.fullName)
+            })
+            res.send(authors)
+
         })
-        res.send(authors)
-        
-    })           
 })
 
 app.get('/authors/:id', (req, res) => {
-    Author.findOne({_id: req.params.id})
-    .then(author => {
-        console.log('Just passing through thanks...')
-        res.json(author)
-    })           
+    Author.findOne({ _id: req.params.id })
+        .then(author => {
+            console.log('Just passing through thanks...')
+            res.json(author)
+        })
 })
 
 app.get('/posts', (req, res) => {
     Post.find()
-    // .cursor()
-    // .on('data', function(doc) {console.log(doc)})
-    // .on('end', function() {console.log('done!')})
-    .populate('author')
-    .select('-comments')
-    .then(function(posts) {
-        let newPosts =[];
-        posts.forEach(post => {
-            console.log(post.serialize())
-            newPosts.push(post.serialize())
+        // .cursor()
+        // .on('data', function(doc) {console.log(doc)})
+        // .on('end', function() {console.log('done!')})
+        .populate('author')
+        .select('-comments')
+        .then(function (posts) {
+            let newPosts = [];
+            posts.forEach(post => {
+                console.log(post.serialize())
+                newPosts.push(post.serialize())
+            })
+            res.json(newPosts)
         })
-        res.json(newPosts)  
-    })
-    
+
     res.status(200)
-    
+
     /*code the get */
 });
 
@@ -57,7 +57,7 @@ app.get('/posts/:id', (req, res) => {
     Post.findOne({ _id: req.params.id })
         .populate('author')
         .then(post => {
-           console.log(post)
+            console.log(post)
             res.json(post.serialize())
         });
     res.status(200);
@@ -68,38 +68,38 @@ app.post('/posts', jsonParser, (req, res) => {
     requiredFields.forEach(field => {
         if (!(req.body[field])) {
             console.error('air ores');
-        return res.send(`Missing ${field} in data`).status(400)
+            return res.send(`Missing ${field} in data`).status(400)
         };
     })
     /*Validate author exists */
-    const {author_id} = req.body
+    const { author_id } = req.body
     let newId = extract(author_id)
-    
+
     const valid = Author.checkExist(newId)
 
 
- 
+
     // console.log(!valid === newId)
-    Post.findByIdAndUpdate({_id: mongoose.Types.ObjectId()}, {
+    Post.findByIdAndUpdate({ _id: mongoose.Types.ObjectId() }, {
         title: req.body.title,
         author: newId,
         content: req.body.content,
         created: new Date
     }, {
-        upsert: true,
-        setDefaultsOnInsert: true,
-        new: true,
-        populate: 'author'
-    })
+            upsert: true,
+            setDefaultsOnInsert: true,
+            new: true,
+            populate: 'author'
+        })
 
-    .then(function(newPost){
-           
-        console.log(newPost.serialize(), 'after-then')
-        res.json(newPost.serialize())
-        res.status(202)
-    })
-    .catch(err => console.log(err))
-    
+        .then(function (newPost) {
+
+            console.log(newPost.serialize(), 'after-then')
+            res.json(newPost.serialize())
+            res.status(202)
+        })
+        .catch(err => console.log(err))
+
 
     /*code the Post */
 });
@@ -120,27 +120,27 @@ app.put('/posts/:id', (req, res) => {
     // Signature of .findByIdAndUpdate():
     // id to find, new data to update with, options
     // in options, we set new:true so that we get the newly updated data
-    Post.findByIdAndUpdate(req.params.id, updatedData, {new: true})
-    .then(post => {
-        console.log(post.id)
-        res.sendStatus(200)
-    })
+    Post.findByIdAndUpdate(req.params.id, updatedData, { new: true })
+        .then(post => {
+            console.log(post.id)
+            res.sendStatus(200)
+        })
 });
 
 app.delete('/posts/:id', (req, res) => {
-    if(!req.params.id) {
+    if (!req.params.id) {
         console.error('missing \'id\'!!')
         return res.status(400)
     };
-    Post.findByIdAndDelete({_id: req.params.id})
-    .then( res.end().status(204))
+    Post.findByIdAndDelete({ _id: req.params.id })
+        .then(res.end().status(204))
     /*make a post remover here */
 });
 
 app.post('/authors', (req, res) => {
     const expectedFields = ['firstName', 'lastName', 'userName'];
     expectedFields.forEach(field => {
-        if(!req.body[field]) {
+        if (!req.body[field]) {
             let msg = `Insufficiient Data! Mis   
             // Post.create({
             //     title: req.body.title,
@@ -152,21 +152,22 @@ app.post('/authors', (req, res) => {
             console.error(msg);
             return res.status(400)
         }
-    }) 
+    })
 
-    const {firstName, lastName, userName} = req.body
-    const newAuthor = {firstName,
-                       lastName,
-                       userName 
-                       };
-        s
+    const { firstName, lastName, userName } = req.body
+    const newAuthor = {
+        firstName,
+        lastName,
+        userName
+    };
+    s
 })
 
 let server;
 
 function runServer(PORT, DATABASE_URL) {
 
-/*recommended for performance outside of dev env :  */
+    /*recommended for performance outside of dev env :  */
     mongoose.connect(DATABASE_URL, { useNewUrlParser: true }, error => {
 
         if (error) {
