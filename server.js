@@ -34,10 +34,6 @@ app.get('/authors/:id', (req, res) => {
 
 app.get('/posts', (req, res) => {
     Post.find()
-        // .cursor()
-        // .on('data', function(doc) {console.log(doc)})
-        // .on('end', function() {console.log('done!')})
-        .populate('author')
         .select('-comments')
         .then(function (posts) {
             let newPosts = [];
@@ -55,9 +51,9 @@ app.get('/posts', (req, res) => {
 
 app.get('/posts/:id', (req, res) => {
     Post.findOne({ _id: req.params.id })
-        .populate('author')
+        // .populate('author')
         .then(post => {
-            console.log(post)
+            console.log(post.serialize())
             res.json(post.serialize())
         });
     res.status(200);
@@ -74,8 +70,7 @@ app.post('/posts', jsonParser, (req, res) => {
     /*Validate author exists */
     const { author_id } = req.body
     let newId = extract(author_id)
-
-    const valid = Author.checkExist(newId)
+    const valid = Author.checkExist(newId, '_id')
 
 
 
@@ -153,8 +148,20 @@ app.post('/authors', (req, res) => {
         lastName,
         userName
     };
-    s
+    
+    console.log(newAuthor.userName)
+    let val = Author.checkExist(newAuthor.userName, 'userName')
+
+    console.log()
 })
+
+
+
+
+
+
+
+
 
 let server;
 
