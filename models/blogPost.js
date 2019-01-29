@@ -25,28 +25,27 @@ blogPostSchema.methods.serialize = function() {
   }
 }
 
-// function populateAuthor() {
-//   console.log('twiggeredOne')
-//   console.log()
-//     console.log('twiggeredTwo')
-// }
+function populateAuthor() {
+  this.populate('author');
 
-// blogPostSchema.pre('find', populateAuthor)
-// blogPostSchema.pre('findOne', populateAuthor(err, doc))
+}
 
-blogPostSchema.pre('validate', function() {
+blogPostSchema.pre('find', populateAuthor)
+blogPostSchema.pre('findOne', populateAuthor)
+
+// blogPostSchema.pre('validate', function() {
   
-    console.log(this.author, 'valley')
+//     console.log(this.author, 'valley')
     
-});
+// });
 
-blogPostSchema.post('validate', function() {
-  console.log('post-Val')
-})
+// blogPostSchema.post('validate', function() {
+//   console.log('post-Val')
+// })
 
-blogPostSchema.pre('save', function() {
-  console.log('pre-save')
-});
+// blogPostSchema.pre('save', function() {
+//   console.log('pre-save')
+// });
 
 blogPostSchema.post('save', function() {
   console.log(this, 'post-save')
