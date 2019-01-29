@@ -33,20 +33,6 @@ function populateAuthor() {
 blogPostSchema.pre('find', populateAuthor)
 blogPostSchema.pre('findOne', populateAuthor)
 
-// blogPostSchema.pre('validate', function() {
-  
-//     console.log(this.author, 'valley')
-    
-// });
-
-// blogPostSchema.post('validate', function() {
-//   console.log('post-Val')
-// })
-
-// blogPostSchema.pre('save', function() {
-//   console.log('pre-save')
-// });
-
 blogPostSchema.post('save', function() {
   console.log(this, 'post-save')
 })
