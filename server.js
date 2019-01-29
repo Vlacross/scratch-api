@@ -63,14 +63,6 @@ app.get('/posts/:id', (req, res) => {
     res.status(200);
 })
 
-app.post('/postser', (req, res) => {
-    const {author_id} = req.body
-    let newId = extract(author_id)
-    console.log(newId, 'post-extract')
-    Post.find({_id: newId})
-})
-
-
 app.post('/posts', jsonParser, (req, res) => {
     const requiredFields = ["author_id", "title", "content"];
     requiredFields.forEach(field => {
@@ -99,18 +91,9 @@ app.post('/posts', jsonParser, (req, res) => {
         new: true,
         populate: 'author'
     })
-    
-    // Post.create({
-    //     title: req.body.title,
-    //     author: newId,
-    //     content: req.body.content,
-    //     created: new Date
-    // })
-    
-    
+
     .then(function(newPost){
-        
-        
+           
         console.log(newPost.serialize(), 'after-then')
         res.json(newPost.serialize())
         res.status(202)
@@ -142,17 +125,6 @@ app.put('/posts/:id', (req, res) => {
         console.log(post.id)
         res.sendStatus(200)
     })
-
-    // const newData = Object.keys(req.body)
-    // console.log(newData)
-    // const possibleUpdates = ["title", "author", "content"]
-    // newData.forEach(key => {
-    //     if (!possibleUpdates.includes(key)) {
-    //         console.error('db Schema doesn\'t support proposed data')
-    //     }
-    // })
-    // Post.update({_id: "id"}, {$set: newData })
-    // /*code some updater */
 });
 
 app.delete('/posts/:id', (req, res) => {
@@ -164,6 +136,31 @@ app.delete('/posts/:id', (req, res) => {
     .then( res.end().status(204))
     /*make a post remover here */
 });
+
+app.post('/authors', (req, res) => {
+    const expectedFields = ['firstName', 'lastName', 'userName'];
+    expectedFields.forEach(field => {
+        if(!req.body[field]) {
+            let msg = `Insufficiient Data! Mis   
+            // Post.create({
+            //     title: req.body.title,
+            //     author: newId,
+            //     content: req.body.content,
+            //     created: new Date
+            // })
+            sing ${field} in request body!`
+            console.error(msg);
+            return res.status(400)
+        }
+    }) 
+
+    const {firstName, lastName, userName} = req.body
+    const newAuthor = {firstName,
+                       lastName,
+                       userName 
+                       };
+        s
+})
 
 let server;
 
