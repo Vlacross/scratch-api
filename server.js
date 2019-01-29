@@ -66,6 +66,7 @@ app.get('/posts/:id', (req, res) => {
 app.post('/postser', (req, res) => {
     const {author_id} = req.body
     let newId = extract(author_id)
+    console.log(newId, 'post-extract')
     Post.find({_id: newId})
 })
 
@@ -81,28 +82,37 @@ app.post('/posts', jsonParser, (req, res) => {
     /*Validate author exists */
     const {author_id} = req.body
     let newId = extract(author_id)
+    
     const valid = Author.checkExist(newId)
 
 
  
     // console.log(!valid === newId)
-  
-    
-    Post.create({
+    Post.findByIdAndUpdate({_id: mongoose.Types.ObjectId()}, {
         title: req.body.title,
         author: newId,
         content: req.body.content,
         created: new Date
-    }, {toObject: {
-        populate: true
-    }})
+    }, {
+        upsert: true,
+        setDefaultsOnInsert: true,
+        new: true,
+        populate: 'author'
+    })
+    
+    // Post.create({
+    //     title: req.body.title,
+    //     author: newId,
+    //     content: req.body.content,
+    //     created: new Date
+    // })
     
     
     .then(function(newPost){
         
         
-        console.log(newPost)
-        // res.json(newPost.serialize())
+        console.log(newPost.serialize(), 'after-then')
+        res.json(newPost.serialize())
         res.status(202)
     })
     .catch(err => console.log(err))
