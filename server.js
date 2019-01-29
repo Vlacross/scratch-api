@@ -37,7 +37,7 @@ app.get('/posts', (req, res) => {
         // .cursor()
         // .on('data', function(doc) {console.log(doc)})
         // .on('end', function() {console.log('done!')})
-        // .populate('author')
+        .populate('author')
         .select('-comments')
         .then(function (posts) {
             let newPosts = [];
@@ -55,7 +55,7 @@ app.get('/posts', (req, res) => {
 
 app.get('/posts/:id', (req, res) => {
     Post.findOne({ _id: req.params.id })
-    // .select('-firstName')
+        .populate('author')
         .then(post => {
             console.log(post)
             res.json(post.serialize())
@@ -80,13 +80,20 @@ app.post('/posts', jsonParser, (req, res) => {
 
 
     // console.log(!valid === newId)
-    Post.create({
+    Post.findByIdAndUpdate({ _id: mongoose.Types.ObjectId() }, {
         title: req.body.title,
         author: newId,
         content: req.body.content,
         created: new Date
-    })
-    .then(function (newPost) {
+    }, {
+            upsert: true,
+            setDefaultsOnInsert: true,
+            new: true,
+            populate: 'author'
+        })
+
+        .then(function (newPost) {
+
             console.log(newPost.serialize(), 'after-then')
             res.json(newPost.serialize())
             res.status(202)
