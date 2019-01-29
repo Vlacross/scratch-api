@@ -10,6 +10,11 @@ const authorSchema = new schema({
                unique: true}
   }, SCHEMA_OPTS);
   
+
+authorSchema.pre('save', function() {
+  Author.checkExist(this.userName, 'userName')
+})
+
 /*
 *Check for existence in Author collection
 * @param {String} param - Unique value being used to search for author
