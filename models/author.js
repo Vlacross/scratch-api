@@ -10,24 +10,36 @@ const authorSchema = new schema({
                unique: true}
   }, SCHEMA_OPTS);
   
-  authorSchema.statics.checkExist = function(newId) {
+/*
+*Check for existence in Author collection
+* @param {String} param - Unique value being used to search for author
+* @param {String} type - Schema property  */
+  authorSchema.statics.checkExist = function(param, type) {
     /*use count() to verify author_id existance within db  */
-      
-    this.count({_id:  newId}, function(err, count) {
     
+    var query = {};
+    query[type] = param;
+
+    return this.count(query, function(err, count) {
+      
         if(count > 0) {
           let msg = `Author exists in db. Found ${count} match`;
           console.log(msg)
-          return newId;
-        } else if (count = 0) {
+          return param
+        }
+        if (count = 0) {
           let msg = `Couldn't find Author_id ${newId}`
           console.log(msg)
           return new Error(msg);
-        } else if (err) {
+        }
+        if(err) {
           console.log(err.name)
           return new Error(err.name)
         }
-      })
+
+        return param
+    })
+      
   };
   
   authorSchema.virtual('fullName').get(function() {
