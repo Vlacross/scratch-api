@@ -141,14 +141,7 @@ app.post('/authors', (req, res) => {
     const expectedFields = ['firstName', 'lastName', 'userName'];
     expectedFields.forEach(field => {
         if (!req.body[field]) {
-            let msg = `Insufficiient Data! Mis   
-            // Post.create({
-            //     title: req.body.title,
-            //     author: newId,
-            //     content: req.body.content,
-            //     created: new Date
-            // })
-            sing ${field} in request body!`
+            let msg = `Insufficiient Data! Missing ${field} in request body!`
             console.error(msg);
             return res.status(400)
         }
