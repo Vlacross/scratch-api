@@ -12,26 +12,6 @@ const { extract } = require('./toolCode')
 app.use(express.json());
 app.use(express.static('view'));
 
-
-app.get('/authors', (req, res) => {
-    Author.find()
-        .then(function (authors) {
-            authors.forEach(author => {
-                console.log(author.fullName)
-            })
-            res.send(authors)
-
-        })
-})
-
-app.get('/authors/:id', (req, res) => {
-    Author.findOne({ _id: req.params.id })
-        .then(author => {
-            console.log('Just passing through thanks...')
-            res.json(author)
-        })
-})
-
 app.get('/posts', (req, res) => {
     Post.find()
         .select('-comments')
@@ -123,6 +103,26 @@ app.delete('/posts/:id', (req, res) => {
     /*make a post remover here */
 });
 
+/*Authors */
+app.get('/authors', (req, res) => {
+    Author.find()
+        .then(function (authors) {
+            authors.forEach(author => {
+                console.log(author.fullName)
+            })
+            res.send(authors)
+
+        })
+})
+
+app.get('/authors/:id', (req, res) => {
+    Author.findOne({ _id: req.params.id })
+        .then(author => {
+            console.log('Just passing through thanks...')
+            res.json(author)
+        })
+})
+
 app.post('/authors', (req, res) => {
     const expectedFields = ['firstName', 'lastName', 'userName'];
     expectedFields.forEach(field => {
@@ -139,11 +139,28 @@ app.post('/authors', (req, res) => {
         lastName,
         userName
     };
-    
-    // console.log(newAuthor.userName)
-    // Author.checkExist(newAuthor.userName, 'userName')
 
     Author.create(newAuthor)
+    .then(author => {
+        console.log(author)
+        res.json(author.serialize()).status(200)
+    })
+})
+
+app.put('/authors/:id', (req, res) => {
+    if(!req.params.id) {
+        console.error('missing \'id\'!!');
+        return res.status(400).end()
+    };
+    
+    const {firstName, lastName, userName, _id} = req.body
+    const authorData = {
+        firstName,
+        lastName,
+        userName
+    }
+
+    Author.findByIdAndUpdate(_id, {$set: authorData}, {new: true})
     .then(author => {
         console.log(author)
         res.json(author.serialize()).status(200)
