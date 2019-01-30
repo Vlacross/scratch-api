@@ -97,17 +97,16 @@ app.put('/posts/:id', (req, res) => {
         return res.status(400)
     };
 
-    const { title, author, content, created } = req.body;
+    const { title, content, _id } = req.body;
     const updatedData = {
         title,
-        author,
-        content,
-        created
+        content
     }
+    console.log(updatedData)
     // Signature of .findByIdAndUpdate():
     // id to find, new data to update with, options
     // in options, we set new:true so that we get the newly updated data
-    Post.findByIdAndUpdate(req.params.id, updatedData, { new: true })
+    Post.findByIdAndUpdate(_id, {$set: updatedData}, { new: true })
         .then(post => {
             console.log(post.id)
             res.sendStatus(200)
