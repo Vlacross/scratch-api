@@ -146,7 +146,7 @@ app.post('/authors', (req, res) => {
 
     Author.create(newAuthor)
     .then(author => {
-        console.log(author.serialize())
+        console.log(author)
         res.json(author.serialize()).status(200)
     })
 })
