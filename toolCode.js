@@ -14,3 +14,20 @@ function extract(rawVal) {
 
 
 module.exports = { extract }
+
+
+
+
+
+
+  // Post.findByIdAndUpdate({ _id: mongoose.Types.ObjectId() }, {
+    //     title: req.body.title,
+    //     author: newId,
+    //     content: req.body.content,
+    //     created: new Date
+    // }, {
+    //         upsert: true,
+    //         setDefaultsOnInsert: true,
+    //         new: true,
+    //         populate: 'author'
+    //     })
