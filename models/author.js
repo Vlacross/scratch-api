@@ -15,6 +15,9 @@ const authorSchema = new schema({
 authorSchema.pre('save', function() {
   Author.checkExist(this.userName, 'userName')
 })
+authorSchema.post('save', function() {
+  console.log('pre-auth', this, 'authorsaver')
+})
 
 
 authorSchema.methods.serialize = function() {

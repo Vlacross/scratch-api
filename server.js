@@ -59,8 +59,9 @@ app.post('/posts', jsonParser, (req, res) => {
         content: req.body.content,
         created: new Date
     })
+   
+       
         .then(function (newPost) {
-
             console.log(newPost.serialize(), 'after-then')
             res.json(newPost.serialize())
             res.status(202)
@@ -102,6 +103,8 @@ app.delete('/posts/:id', (req, res) => {
         .then(res.end().status(204))
     /*make a post remover here */
 });
+/* */
+
 
 /*Authors */
 app.get('/authors', (req, res) => {
@@ -165,6 +168,19 @@ app.put('/authors/:id', (req, res) => {
         console.log(author)
         res.json(author.serialize()).status(200)
     })
+})
+
+app.delete('/authors/:id', (req, res) => {
+    if(!req.params.id) {
+        console.error('missing \'id\'!!');
+        return res.status(400).end()
+    };
+    const authorId = req.params.id;
+
+    Author.findByIdAndDelete({id: authorId})
+    Post.deleteMany({author: `ObjectId("${authorId}")`})
+    res.status(204).end()
+    
 })
 
 
