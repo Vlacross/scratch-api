@@ -15,6 +15,16 @@ authorSchema.pre('save', function() {
   Author.checkExist(this.userName, 'userName')
 })
 
+
+authorSchema.methods.serialize = function() {
+  return {
+    _id: this._id,
+    name: this.fullName,
+    userName: this.userName
+  }
+}
+
+
 /*
 *Check for existence in Author collection
 * @param {String} param - Unique value being used to search for author
