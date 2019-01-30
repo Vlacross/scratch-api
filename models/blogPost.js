@@ -14,6 +14,7 @@ const blogPostSchema = new schema({
   created: {type: Date, default: Date.now},
   comments: [{type: ObjectId, ref: 'Comment'}]
 }, SCHEMA_OPTS);
+// blogPostSchema.plugin(require('mongoose-autopopulate'))
 
 blogPostSchema.methods.serialize = function() {
   return {
@@ -26,7 +27,7 @@ blogPostSchema.methods.serialize = function() {
 }
 
 function populateAuthor() {
-  this.populate('author');
+  // this.populate('author');
 
 }
 
@@ -34,7 +35,9 @@ blogPostSchema.pre('find', populateAuthor)
 blogPostSchema.pre('findOne', populateAuthor)
 
 blogPostSchema.post('save', function() {
+  this.populate('author')
   console.log(this, 'post-save')
+  
 })
 
 

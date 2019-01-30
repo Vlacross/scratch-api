@@ -10,6 +10,7 @@ const authorSchema = new schema({
                unique: true}
   }, SCHEMA_OPTS);
   
+  
 
 authorSchema.pre('save', function() {
   Author.checkExist(this.userName, 'userName')
