@@ -17,7 +17,6 @@ authorSchema.pre('save', function() {
 
 authorSchema.methods.serialize = function() {
   return {
-    _id: this._id,
     name: this.fullName,
     userName: this.userName
   }

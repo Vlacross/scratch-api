@@ -12,26 +12,23 @@ const { extract } = require('./toolCode')
 app.use(express.json());
 app.use(express.static('view'));
 
+/*Get all Posts */
 app.get('/posts', (req, res) => {
     Post.find()
         .select('-comments')
         .then(function (posts) {
             let newPosts = [];
             posts.forEach(post => {
-                console.log(post.serialize())
                 newPosts.push(post.serialize())
             })
             res.json(newPosts)
         })
-
-    res.status(200)
-
-    /*code the get */
+    res.status(200);
 });
 
+/*Get Post by Id(includes comments) */
 app.get('/posts/:id', (req, res) => {
     Post.findOne({ _id: req.params.id })
-        // .populate('author')
         .then(post => {
             console.log(post.serialize())
             res.json(post.serialize())
@@ -39,7 +36,9 @@ app.get('/posts/:id', (req, res) => {
     res.status(200);
 })
 
+/*make and add a Post */
 app.post('/posts', jsonParser, (req, res) => {
+    /*check required fields exist in header*/
     const requiredFields = ["author_id", "title", "content"];
     requiredFields.forEach(field => {
         if (!(req.body[field])) {
@@ -50,26 +49,28 @@ app.post('/posts', jsonParser, (req, res) => {
     /*Validate author exists */
     const { author_id } = req.body
     let newId = extract(author_id)
-    const valid = Author.checkExist(newId, '_id')
-
-    // console.log(!valid === newId)
+    Author.checkExist(newId, '_id').exec()
+    .then(function(val) {
+        if(!(val === 1)) {
+            console.log(val)
+            return res.status(400).end()
+        }
+        return val
+    })
     Post.create({
         title: req.body.title,
         author: newId,
         content: req.body.content,
         created: new Date
     })
-        .then(newPost => {
-            console.log(newPost.serialize(), 'after-then')
-            res.json(newPost.serialize())
-            res.status(202)
-        })
-        .catch(err => console.log(err))
-
-
-    /*code the Post */
+    .then(newPost => {
+        res.json(newPost.serialize())
+        res.status(202)
+    })
+    .catch(err => console.log(err))
 });
 
+/*Update post(title and content only) */
 app.put('/posts/:id', (req, res) => {
     if (!req.params.id) {
         console.error('Missing \'id\'!!')
@@ -81,42 +82,43 @@ app.put('/posts/:id', (req, res) => {
         title,
         content
     }
-    console.log(updatedData)
     // Signature of .findByIdAndUpdate():
     // id to find, new data to update with, options
     // in options, we set new:true so that we get the newly updated data
     Post.findByIdAndUpdate(_id, {$set: updatedData}, { new: true })
+        .select('-comments')
         .then(post => {
-            res.sendStatus(200)
+            res.json(post.serialize()).status(200).end()
         })
 });
 
+/*delete author by id along with all referenced posts */
 app.delete('/posts/:id', (req, res) => {
     if (!req.params.id) {
         console.error('missing \'id\'!!')
         return res.status(400)
     };
     Post.findByIdAndDelete({ _id: req.params.id })
-        .then(res.end().status(204))
-    /*make a post remover here */
+        .then(res.status(204).end()
+        )
 });
-/* */
-
 
 /*Authors */
+
+/*Get all authors */
 app.get('/authors', (req, res) => {
     Author.find()
         .then(function (authors) {
             let authorList = [];
             authors.forEach(author => {
-                console.log(author.fullName)
                 authorList.push(author.serialize())
             })
-            res.send(authors)
+            res.send(authorList)
 
         })
 })
 
+/*Get author by id */
 app.get('/authors/:id', (req, res) => {
     Author.findOne({ _id: req.params.id })
         .then(author => {
@@ -125,6 +127,7 @@ app.get('/authors/:id', (req, res) => {
         })
 })
 
+/*Add an author with POST */
 app.post('/authors', (req, res) => {
     const expectedFields = ['firstName', 'lastName', 'userName'];
     expectedFields.forEach(field => {
@@ -144,7 +147,6 @@ app.post('/authors', (req, res) => {
 
     Author.create(newAuthor)
     .then(author => {
-        console.log(author)
         res.json(author.serialize()).status(200).end()
     })
 })
@@ -155,20 +157,22 @@ app.put('/authors/:id', (req, res) => {
         return res.status(400).end()
     };
     
-    const {firstName, lastName, userName, _id} = req.body
+    const id = req.params.id
+    const {firstName, lastName, userName} = req.body
     const authorData = {
         firstName,
         lastName,
         userName
     }
 
-    Author.findByIdAndUpdate(_id, {$set: authorData}, {new: true})
+    Author.findByIdAndUpdate(id, {$set: authorData}, {new: true})
     .then(author => {
         console.log(author)
         res.json(author.serialize()).status(200)
     })
-})
+});
 
+/*Delete author and all reference docs */
 app.delete('/authors/:id', (req, res) => {
     if(!req.params.id) {
         console.error('missing \'id\'!!');
@@ -178,46 +182,17 @@ app.delete('/authors/:id', (req, res) => {
     console.log(authorId)
     
    
-    // Post.find({author: authorId})
-    //     .then(posts => {
-    //         console.log(posts[0].author.id)
-    //         posts.forEach(post => {
-    //             post.remove()
-    //         })
-    //         return ;
-    //     })
-    //  Author.findOne({ _id: req.params.id })
-    //     .remove()
-
-
-    Post.find({author: authorId}, function(err, doc) {
-        // console.log(doc.exec())
-    })
-    Author.find({_id: authorId}).remove()
-
-    
-    .then(res.status(204).end())
-    console.log('ends')
-    
-})
-/*
-app.delete('/posts/:id', (req, res) => {
-    if (!req.params.id) {
-        console.error('missing \'id\'!!')
-        return res.status(400)
-    };
-    Post.findByIdAndDelete({ _id: req.params.id })
-        .then(res.end().status(204))
-    /*make a post remover here 
+    Post.find({author: authorId})
+        .then(posts => {
+            posts.forEach(post => {
+                post.remove()
+            });  
+        });
+     Author.findOne({ _id: authorId }).remove()
+    .then(res.status(204).end())   
 });
-*/
 
-
-
-
-
-
-
+/*Handle server Status */
 let server;
 
 function runServer(PORT, DATABASE_URL) {
@@ -237,12 +212,7 @@ function runServer(PORT, DATABASE_URL) {
             mongoose.disconnect();
             reject(err)
         });
-
-        // const message = 'Could not connect to db. Make sure server is running.';
-        // console.error(message)
     })
-
-
 };
 
 function closeServer() {
