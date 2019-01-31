@@ -10,20 +10,10 @@ const authorSchema = new schema({
     userName: {type: String,
                unique: true}
   }, SCHEMA_OPTS);
-  
-function deletePosts() {
-  Post.deleteMany({author: this._conditions._id})
-  console.log('postbegone')
-}
 
 authorSchema.pre('save', function() {
-  Author.checkExist(this.userName, 'userName')
+  Author.checkExist(this.userName, 'userName').exec()
 })
-
-authorSchema.pre('deleteOne', deletePosts)
-
-
-
 
 authorSchema.methods.serialize = function() {
   return {
@@ -44,7 +34,7 @@ authorSchema.methods.serialize = function() {
     var query = {};
     query[type] = param;
 
-    return this.count(query, function(err, count) {
+     const result = this.count(query, function(err, count) {
       
         if(count > 0) {
           let msg = `Author exists in db. Found ${count} match`;
@@ -54,16 +44,15 @@ authorSchema.methods.serialize = function() {
         if (count = 0) {
           let msg = `Couldn't find Author_id ${newId}`
           console.log(msg)
-          return new Error(msg);
+          return msg;
         }
         if(err) {
           console.log(err.name)
           return new Error(err.name)
         }
 
-        return param
     })
-      
+      return result;
   };
   
   authorSchema.virtual('fullName').get(function() {
