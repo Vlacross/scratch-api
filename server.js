@@ -59,9 +59,7 @@ app.post('/posts', jsonParser, (req, res) => {
         content: req.body.content,
         created: new Date
     })
-   
-       
-        .then(function (newPost) {
+        .then(newPost => {
             console.log(newPost.serialize(), 'after-then')
             res.json(newPost.serialize())
             res.status(202)
@@ -89,7 +87,6 @@ app.put('/posts/:id', (req, res) => {
     // in options, we set new:true so that we get the newly updated data
     Post.findByIdAndUpdate(_id, {$set: updatedData}, { new: true })
         .then(post => {
-            console.log(post.id)
             res.sendStatus(200)
         })
 });
@@ -110,8 +107,10 @@ app.delete('/posts/:id', (req, res) => {
 app.get('/authors', (req, res) => {
     Author.find()
         .then(function (authors) {
+            let authorList = [];
             authors.forEach(author => {
                 console.log(author.fullName)
+                authorList.push(author.serialize())
             })
             res.send(authors)
 
@@ -122,7 +121,7 @@ app.get('/authors/:id', (req, res) => {
     Author.findOne({ _id: req.params.id })
         .then(author => {
             console.log('Just passing through thanks...')
-            res.json(author)
+            res.json(author.serialize())
         })
 })
 
@@ -146,7 +145,7 @@ app.post('/authors', (req, res) => {
     Author.create(newAuthor)
     .then(author => {
         console.log(author)
-        res.json(author.serialize()).status(200)
+        res.json(author.serialize()).status(200).end()
     })
 })
 
@@ -176,14 +175,42 @@ app.delete('/authors/:id', (req, res) => {
         return res.status(400).end()
     };
     const authorId = req.params.id;
+    console.log(authorId)
+    
+   
+    // Post.find({author: authorId})
+    //     .then(posts => {
+    //         console.log(posts[0].author.id)
+    //         posts.forEach(post => {
+    //             post.remove()
+    //         })
+    //         return ;
+    //     })
+    //  Author.findOne({ _id: req.params.id })
+    //     .remove()
 
-    Author.findByIdAndDelete({id: authorId})
-    Post.deleteMany({author: `ObjectId("${authorId}")`})
-    res.status(204).end()
+
+    Post.find({author: authorId}, function(err, doc) {
+        // console.log(doc.exec())
+    })
+    Author.find({_id: authorId}).remove()
+
+    
+    .then(res.status(204).end())
+    console.log('ends')
     
 })
-
-
+/*
+app.delete('/posts/:id', (req, res) => {
+    if (!req.params.id) {
+        console.error('missing \'id\'!!')
+        return res.status(400)
+    };
+    Post.findByIdAndDelete({ _id: req.params.id })
+        .then(res.end().status(204))
+    /*make a post remover here 
+});
+*/
 
 
 
@@ -219,7 +246,7 @@ function runServer(PORT, DATABASE_URL) {
 };
 
 function closeServer() {
-    mongoose.disconnect();
+    mongoose.connection.close();
 
 };
 

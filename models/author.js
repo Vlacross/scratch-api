@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const schema = mongoose.Schema;
 
+const { Post } = require('./blogPost')
 const { SCHEMA_OPTS } = require('./common')
 
 const authorSchema = new schema({
@@ -10,14 +11,18 @@ const authorSchema = new schema({
                unique: true}
   }, SCHEMA_OPTS);
   
-  
+function deletePosts() {
+  Post.deleteMany({author: this._conditions._id})
+  console.log('postbegone')
+}
 
 authorSchema.pre('save', function() {
   Author.checkExist(this.userName, 'userName')
 })
-authorSchema.post('save', function() {
-  console.log('pre-auth', this, 'authorsaver')
-})
+
+authorSchema.pre('deleteOne', deletePosts)
+
+
 
 
 authorSchema.methods.serialize = function() {
