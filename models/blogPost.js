@@ -34,11 +34,12 @@ function populateAuthor() {
 blogPostSchema.pre('find', populateAuthor)
 blogPostSchema.pre('findOne', populateAuthor)
 
-// blogPostSchema.post('save', function(err, doc) {
-//   // Author.populate(doc, {path: 'author', model: 'Author'})
-//   // console.log(this, 'post-save')
+blogPostSchema.post('save', function(doc, next) {
+  doc.populate('author').execPopulate(function() {
+    next();
+  })
   
-// })
+})
 
 
 
