@@ -48,8 +48,8 @@ app.use(express.static('view'));
 app.post('/merch-side-product', jsonParser, (req, res) => {
     let missingFields
     const requiredFields = ['uuid', 'subscription', 'custName', 'fiscalToken'];
-    missingFields = requiredFields.find(field => !req.body[field])
-    if(missingFields.length !== 0) {
+    missingFields = requiredFields.filter(field => !req.body[field])
+    if(missingFields.length > 0) {
         return res.json({
             type: 'error',
             code: 451,
