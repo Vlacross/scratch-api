@@ -4,6 +4,6 @@ deploy:
   provider: heroku
   api_key:
     secure: i2WaHUidECxof+1s4Rae73Pf6drHFW/SDf6kgrVKYX2POg3EgcAzTjPwuK5n9qq8n2jT4QfVwuG8fDrgM1kt825YMyWKvgEluVd8dhMpUmUtwemrcS7mCyxInqZ78CA1O1CSD/XfulAVvn1+/CNvvPk/rK8Frbizil3+453xsc4fwlzjTR+NJ0m1diA3gVOyEo5lE8kMiihJ13R07Nz5acX7U38ELkcUrqtp1JLJGn+02s3OnnzYcZ7ts+FL3R5VTYkOzBa4mLT2LSd4vh9M6GgEwoNp2pswZswi+i8xvDdK1ErTfia7HLIgc1xSRyprL6a4+ZaKn5+xhXGX8x7JSjsgHrSrV/evX+HURXB3DZy7msDF9qkUfHoSjF/IPvddChU7m2uyxjumo4FknTt3EGP8n0xwlJ3rVW+qnPZXEGur7CrSZBSZoTLdFCDiln2vAXJv2mhRAayqYn2Wk4y2ghqcr7AXvnbF6Dk+2dNJgnKZ4AIvI/RZeDKjxLj2Coob327ebunV20rmUCX+oj69lZ6F7XBShiVJUR3Ioxa/BClE6MaQu8Z5V25eWo6ZaCzlJSEfnnvwqbzp4ebB3fHTIajfSE3Kimi7msODKAK3LIShqJ3BY2TeMv6dzhDS3rI+q1clzhfZdK2EXG9q5+XUjttnqViMm/JU+stdylmtCDM=
-  app: enigmatic-headland-13560
+  app: crud-practice
   on:
     repo: Vlacross/scratch-api

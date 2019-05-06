@@ -12,6 +12,8 @@ const { extract } = require('./toolCode')
 app.use(express.json());
 app.use(express.static('view'));
 
+
+
 /*Get all Posts */
 app.get('/posts', (req, res) => {
     Post.find()
@@ -35,6 +37,43 @@ app.get('/posts/:id', (req, res) => {
         });
     res.status(200);
 })
+
+
+/******************************************************************************************************/
+
+app.post('merch-side-product', (req, res) => {
+    const requiredFields = ['uuid', 'subscription', 'custName', 'fiscalToken'];
+    let missingFields = requiredFields.find(field => !req.body[field])
+    if(missingFields.length !== 0) {
+        return res.json({
+            type: 'error',
+            code: 451,
+            message: `Missing ${missingFields} in request headers, cannot process`
+        })
+    }
+    return res.json({success: true, message: 'merchant product transaction completed successfully'})
+})
+
+
+
+
+
+/*
+ uuid: 000000000000000000000000,
+  prodName: "Chapstick BackPack",
+  subscription: false,
+  custName: "Ralphy Jones",
+  fiscalToken: "$PL0I!G111eLvEnZkQq"
+
+*/
+
+
+
+
+
+
+
+/******************************************************************************************************/
 
 /*make and add a Post */
 app.post('/posts', jsonParser, (req, res) => {
