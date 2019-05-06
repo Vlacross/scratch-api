@@ -2,6 +2,7 @@ const express = require('express');
 const app = express()
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
+const cors = require('cors');
 
 const mongoose = require('mongoose');
 
@@ -9,8 +10,11 @@ const { PORT, DATABASE_URL } = require('./config');
 const { Author, Post } = require('./models')
 const { extract } = require('./toolCode')
 
+
+app.use(cors())
 app.use(express.json());
 app.use(express.static('view'));
+
 
 
 
