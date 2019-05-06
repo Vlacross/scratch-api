@@ -45,7 +45,7 @@ app.use(express.static('view'));
 
 /******************************************************************************************************/
 
-app.post('merch-side-product', jsonParser, (req, res) => {
+app.post('/merch-side-product', jsonParser, (req, res) => {
     const requiredFields = ['uuid', 'subscription', 'custName', 'fiscalToken'];
     let missingFields = requiredFields.find(field => !req.body[field])
     if(missingFields.length !== 0) {
